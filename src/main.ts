@@ -30,6 +30,10 @@ async function bootstrap() {
   const port = process.env.PORT || 2000;
   await app.listen(port);
   console.log(`🚀 Server is running on http://localhost:${port}`);
+
+  app.use('/', (req, res) => {
+    res.send('Hello World');
+  });
 }
 
 bootstrap();
