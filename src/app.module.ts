@@ -3,6 +3,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     AuthModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}
