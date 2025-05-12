@@ -21,9 +21,12 @@ export class AuthService {
     private emailService: EmailService,
     private readonly configService: ConfigService,
   ) {}
-
+ // CODE SMELL #1 Duplicated code Solution: Create a method to generate JWT token
   async generateToken(user: UserDocument) {
     const payload = { sub: user.id, email: user.email, role: user.role };
+    // CODE SMELL #3 Temporary Field
+    // const accessToken = this.jwtService.sign(payload);
+    // CODE SMELL #3 Temporary Field Solution: return the token without storing it
     return this.jwtService.sign(payload);
   }
 
@@ -35,6 +38,9 @@ export class AuthService {
     if (!user.isVerified) {
       throw new UnauthorizedException('Verify your email to get full access!');
     }
+    // CODE SMELL #1 Duplicated code
+    // const payload = { sub: user.id, email: user.email, role: user.role };
+    // const accessToken =  this.jwtService.sign(payload);
     const accessToken = await this.generateToken(user);
     return {
       status: 'success',
@@ -51,6 +57,10 @@ export class AuthService {
     };
   }
 
+
+  // CODE SMELL #4 Uncommunicated Name
+  // async send(email: string) {
+  // CODE SMELL #4 Uncommunicated Name Solution: Rename the method to sendVerificationEmail
   async sendVerificationEmail(email: string) {
     const user = await this.usersService.findOne({ email });
     if (!user) {
@@ -107,9 +117,11 @@ export class AuthService {
       verificationOtp: null,
       verificationOtpExpires: null,
     });
-
+    // CODE SMELL #1 Duplicated code
+    // const payload = { sub: user.id, email: user.email, role: user.role };
+    // const accessToken =  this.jwtService.sign(payload);
     const accessToken = await this.generateToken(user);
-  
+   
     return {
       status: 'success',
       message: 'Email verified successfully!',
@@ -125,13 +137,25 @@ export class AuthService {
     };
   }
 
+  // CODE SMELL #6 Rename method 
+  // async forPass(email: string) {
+  // Code SMELL #6 Rename method Solution: Rename the method to forgetPassword
   async forgetPassword(email: string) {
     const user = await this.usersService.findOne({ email });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+    // CODE SMELL #2 LONG METHOD
+    // const resetToken = crypto.randomBytes(32).toString('hex');
+    //     this.passwordResetToken = crypto
+    //       .createHash('sha256')
+    //       .update(resetToken)
+    //       .digest('hex');
+    //     // Set the token expiration time ( 10 minutes from now)
+    //     this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10
+    // CODE SMELL #2 LONG METHOD Solution: Create a method to generate reset password token
     const token = await user.createResetPasswordToken();
-
+    
     const baseURL = this.configService.get<string>('APP_URL');
     const resetPasswordEmailURL = `${baseURL}auth/reset-password/${token}`;
     // send the resetYourPassword email
