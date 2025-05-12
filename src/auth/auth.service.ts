@@ -125,7 +125,6 @@ export class AuthService {
     };
   }
 
-
   async forgetPassword(email: string) {
     const user = await this.usersService.findOne({ email });
     if (!user) {
